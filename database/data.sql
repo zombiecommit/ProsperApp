@@ -98,3 +98,8 @@ VALUES
     (6, 'Diseño del portafolio',
      'Los proyectos se presentarán mediante tarjetas organizadas visualmente.');
 
+
+INSERT INTO fragmento_codigo (id_funcionalidad, lenguaje, codigo)
+VALUES
+    (1, 'SQL', 'SELECT * FROM producto WHERE codigo = ?;'),
+    (4, 'Java', 'public double calcularBalance() { return ingresos - gastos; }');
