@@ -24,7 +24,13 @@ public class TestUsuarioDAO {
             System.out.println("\n=== Creando usuario nuevo ===");
             String contrasenaPlana = "claveDePrueba123";
             String contrasenaHash = PasswordUtil.hashear(contrasenaPlana);
-            Usuario nuevo = usuarioDAO.crear("Usuario Prueba", "prueba@example.com", contrasenaHash);
+
+            Usuario usuario = new Usuario();
+            usuario.setNombre("Usuario Prueba");
+            usuario.setCorreo("prueba@example.com");
+            usuario.setContrasena(contrasenaHash);
+            Usuario nuevo = usuarioDAO.crear(usuario);
+
             System.out.println("Usuario creado: " + nuevo);
 
             // 3. Buscarlo por correo
@@ -47,8 +53,12 @@ public class TestUsuarioDAO {
             }
 
             // 4. Actualizar su nombre
-            System.out.println("\n=== Actualizando nombre ===");
-            boolean actualizado = usuarioDAO.actualizarNombre(nuevo.getIdUsuario(), "Usuario Prueba Editado");
+            System.out.println("\n=== Actualizando usuario ===");
+
+            nuevo.setNombre("Usuario Prueba Editado");
+
+            boolean actualizado = usuarioDAO.actualizar(nuevo);
+
             System.out.println("¿Se actualizó?: " + actualizado);
 
             // 5. Confirmar el cambio

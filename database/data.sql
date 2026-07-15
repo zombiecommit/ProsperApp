@@ -4,7 +4,7 @@ VALUES
     ('Howard Castillo', 'howard@example.com', 'hash_contrasena_2'),
     ('Carlos Ramirez', 'carlos@example.com', 'hash_contrasena_3');
 
-INSERT INTO proyecto (id_usuario, nombre, descripcion, fecha_limite, estado)
+INSERT INTO seccion (id_usuario, nombre, descripcion, fecha_limite, estado)
 VALUES
     (1, 'Sistema de Inventario',
      'Aplicacion para gestionar productos y existencias.',
@@ -15,7 +15,7 @@ VALUES
      '2026-10-15', 'activo'),
 
     (2, 'Portafolio Web',
-     'Sitio web para presentar proyectos profesionales.',
+     'Sitio web para presentar seccions profesionales.',
      '2026-09-20', 'activo');
 
 INSERT INTO seccion (id_proyecto, nombre, orden)

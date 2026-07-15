@@ -14,22 +14,25 @@ import java.util.Optional;
 
 public class UsuarioDAO {
 
-    public Usuario crear(String nombre, String correo, String contrasenaHash) throws SQLException {
+    public Usuario crear(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO usuario (nombre, correo, contrasena) VALUES (?, ?, ?) " +
                 "RETURNING id_usuario, fecha_registro";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, nombre);
-            stmt.setString(2, correo);
-            stmt.setString(3, contrasenaHash);
+            stmt.setString(1, usuario.getNombre());
+            stmt.setString(2, usuario.getCorreo());
+            stmt.setString(3, usuario.getContrasena());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     int id = rs.getInt("id_usuario");
                     Timestamp fecha = rs.getTimestamp("fecha_registro");
-                    return new Usuario(id, nombre, correo, contrasenaHash, fecha.toLocalDateTime());
+                    usuario.setIdUsuario(id);
+                    usuario.setFechaRegistro(fecha.toLocalDateTime());
+
+                    return usuario;
                 }
             }
         }
@@ -85,14 +88,21 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    public boolean actualizarNombre(int idUsuario, String nuevoNombre) throws SQLException {
-        String sql = "UPDATE usuario SET nombre = ? WHERE id_usuario = ?";
+    public boolean actualizar(Usuario usuario) throws SQLException {
+
+        String sql = """
+            UPDATE usuario
+            SET nombre = ?, correo = ?, contrasena = ?
+            WHERE id_usuario = ?
+            """;
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, nuevoNombre);
-            stmt.setInt(2, idUsuario);
+            stmt.setString(1, usuario.getNombre());
+            stmt.setString(2, usuario.getCorreo());
+            stmt.setString(3, usuario.getContrasena());
+            stmt.setInt(4, usuario.getIdUsuario());
 
             return stmt.executeUpdate() > 0;
         }
