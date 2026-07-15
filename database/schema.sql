@@ -73,11 +73,16 @@ CREATE TABLE nota (
 );
 
 CREATE TABLE decision_tecnica (
-    id_decision      INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_funcionalidad INTEGER      NOT NULL,
-    titulo           VARCHAR(150) NOT NULL,
-    descripcion      TEXT         NOT NULL,
-    fecha_creacion   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id_decision INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_funcionalidad INTEGER NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    descripcion TEXT NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_decision_funcionalidad
+        FOREIGN KEY (id_funcionalidad)
+        REFERENCES funcionalidad(id_funcionalidad)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE fragmento_codigo (
