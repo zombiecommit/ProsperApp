@@ -53,37 +53,3 @@ BEGIN
 
 END;
 $$;
-
-
--- ============================================================
--- FUNCIÓN DEL TRIGGER
--- Se ejecuta automáticamente cuando se inserta una nueva funcionalidad y crea una nota relacionada.
--- ============================================================
-
-CREATE OR REPLACE FUNCTION crear_nota_automatica()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-BEGIN
-
-    -- Crea una nota indicando que la funcionalidad fue registrada
-    INSERT INTO nota (id_funcionalidad, contenido)
-    VALUES (
-        NEW.id_funcionalidad,
-        'Se creó automáticamente la funcionalidad: ' || NEW.titulo
-    );
-
-    -- Devuelve el registro recién insertado
-    RETURN NEW;
-
-END;
-$$;
-
--- TRIGGER
--- Después de insertar una funcionalidad, ejecuta la función crear_nota_automatica().
-
-CREATE OR REPLACE TRIGGER trigger_crear_nota
-AFTER INSERT ON funcionalidad
-FOR EACH ROW
-EXECUTE FUNCTION crear_nota_automatica();

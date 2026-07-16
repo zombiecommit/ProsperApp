@@ -12,7 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import javafx.scene.layout.StackPane;
+import com.prosperapp.util.Toast;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +25,7 @@ public class TableroView {
     private final Proyecto proyecto;
     private final SeccionDAO seccionDAO = new SeccionDAO();
     private final FuncionalidadDAO funcionalidadDAO = new FuncionalidadDAO();
+    private StackPane raizActual;
 
     public TableroView(Stage stage, Usuario usuario, Proyecto proyecto) {
         this.stage = stage;
@@ -69,7 +71,10 @@ public class TableroView {
         VBox contenedor = new VBox(10, encabezado, scrollHorizontal);
         contenedor.setPadding(new Insets(30));
 
-        Scene scene = new Scene(contenedor, 1000, 650);
+        StackPane root = new StackPane(contenedor);
+        this.raizActual = root;
+
+        Scene scene = new Scene(root, 1000, 650);
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
         return scene;
@@ -128,7 +133,13 @@ public class TableroView {
 
         VBox tarjeta = new VBox(4, titulo, prioridad, fechaLimite);
         tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 10px; " +
+                "-fx-cursor: hand; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);");
+
+        tarjeta.setOnMouseClicked(e -> {
+            DetalleFuncionalidadView detalleView = new DetalleFuncionalidadView(stage, usuario, proyecto, funcionalidad);
+            stage.setScene(detalleView.construir());
+        });
 
         return tarjeta;
     }
@@ -191,6 +202,7 @@ public class TableroView {
 
                     // Recarga todo el tablero para reflejar la nueva funcionalidad
                     stage.setScene(construir());
+                    Toast.mostrar(raizActual, "Funcionalidad creada");
 
                 } catch (SQLException ex) {
                     mensajeError.setText("Error al crear la funcionalidad.");

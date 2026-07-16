@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.prosperapp.dao.SeccionDAO;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.prosperapp.util.Toast;
 
 public class DashboardView {
 
@@ -29,6 +31,7 @@ public class DashboardView {
     private final ProyectoDAO proyectoDAO = new ProyectoDAO();
     private final SeccionDAO seccionDAO = new SeccionDAO();
     private VBox listaProyectos;
+    private StackPane raizActual;
 
     public DashboardView(Stage stage, Usuario usuario) {
         this.stage = stage;
@@ -61,8 +64,11 @@ public class DashboardView {
         VBox contenedor = new VBox(15, titulo, encabezado, scroll);
         contenedor.setPadding(new Insets(30));
 
-        BorderPane root = new BorderPane();
-        root.setCenter(contenedor);
+        BorderPane contenidoRoot = new BorderPane();
+        contenidoRoot.setCenter(contenedor);
+
+        StackPane root = new StackPane(contenidoRoot);
+        this.raizActual = root;
 
         cargarProyectos();
 
@@ -242,6 +248,7 @@ public class DashboardView {
                     }
 
                     cargarProyectos();
+                    Toast.mostrar(raizActual, "Proyecto creado");
 
                 } catch (SQLException ex) {
                     mensajeError.setText("Error al crear el proyecto.");
