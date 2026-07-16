@@ -120,4 +120,34 @@ public class SeccionDAO {
                 rs.getInt("orden")
         );
     }
+
+    // ============================================================
+// Obtiene todas las secciones pertenecientes a un proyecto.
+// ============================================================
+    public List<Seccion> listarPorProyecto(int idProyecto) throws SQLException {
+
+        String sql = """
+            SELECT *
+            FROM seccion
+            WHERE id_proyecto = ?
+            ORDER BY orden
+            """;
+
+        List<Seccion> secciones = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idProyecto);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    secciones.add(mapearSeccion(rs));
+                }
+            }
+        }
+
+        return secciones;
+    }
 }
