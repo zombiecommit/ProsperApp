@@ -24,7 +24,11 @@ public class ProyectoDAO {
             stmt.setInt(1, proyecto.getIdUsuario());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
-            stmt.setDate(4, Date.valueOf(proyecto.getFechaLimite()));
+            if (proyecto.getFechaLimite() != null) {
+                stmt.setDate(4, Date.valueOf(proyecto.getFechaLimite()));
+            } else {
+                stmt.setNull(4, Types.DATE);
+            }
             stmt.setString(5, proyecto.getEstado());
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -96,7 +100,11 @@ public class ProyectoDAO {
             stmt.setInt(1, proyecto.getIdUsuario());
             stmt.setString(2, proyecto.getNombre());
             stmt.setString(3, proyecto.getDescripcion());
-            stmt.setDate(4, Date.valueOf(proyecto.getFechaLimite()));
+            if (proyecto.getFechaLimite() != null) {
+                stmt.setDate(4, Date.valueOf(proyecto.getFechaLimite()));
+            } else {
+                stmt.setNull(4, Types.DATE);
+            }
             stmt.setString(5, proyecto.getEstado());
             stmt.setInt(6, proyecto.getIdProyecto());
 
@@ -126,7 +134,7 @@ public class ProyectoDAO {
                 rs.getString("nombre"),
                 rs.getString("descripcion"),
                 rs.getTimestamp("fecha_creacion").toLocalDateTime(),
-                rs.getDate("fecha_limite").toLocalDate(),
+                rs.getDate("fecha_limite") != null ? rs.getDate("fecha_limite").toLocalDate() : null,
                 rs.getString("estado")
         );
     }

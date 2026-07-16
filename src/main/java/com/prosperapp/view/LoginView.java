@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import com.prosperapp.view.DashboardView;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -103,13 +103,7 @@ public class LoginView {
     }
 
     private void irADashboard(Usuario usuario) {
-        VBox bienvenida = new VBox(10, new Label("Bienvenido, " + usuario.getNombre() + " 🌿"));
-        bienvenida.setAlignment(Pos.CENTER);
-
-        StackPane root = new StackPane(bienvenida);
-        Scene scene = new Scene(root, 800, 500);
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-
-        stage.setScene(scene);
+        DashboardView dashboardView = new DashboardView(stage, usuario);
+        stage.setScene(dashboardView.construir());
     }
 }
