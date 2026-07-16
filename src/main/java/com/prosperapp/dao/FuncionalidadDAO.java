@@ -30,7 +30,11 @@ public class FuncionalidadDAO {
             stmt.setString(2, funcionalidad.getTitulo());
             stmt.setString(3, funcionalidad.getDescripcion());
             stmt.setString(4, funcionalidad.getPrioridad());
-            stmt.setDate(5, Date.valueOf(funcionalidad.getFechaLimite()));
+            if (funcionalidad.getFechaLimite() != null) {
+                stmt.setDate(5, Date.valueOf(funcionalidad.getFechaLimite()));
+            } else {
+                stmt.setNull(5, Types.DATE);
+            }
 
             try (ResultSet rs = stmt.executeQuery()) {
 
@@ -148,7 +152,11 @@ public class FuncionalidadDAO {
             stmt.setString(2, funcionalidad.getTitulo());
             stmt.setString(3, funcionalidad.getDescripcion());
             stmt.setString(4, funcionalidad.getPrioridad());
-            stmt.setDate(5, Date.valueOf(funcionalidad.getFechaLimite()));
+            if (funcionalidad.getFechaLimite() != null) {
+                stmt.setDate(5, Date.valueOf(funcionalidad.getFechaLimite()));
+            } else {
+                stmt.setNull(5, Types.DATE);
+            }
             stmt.setInt(6, funcionalidad.getIdFuncionalidad());
 
             return stmt.executeUpdate() > 0;
@@ -184,7 +192,7 @@ public class FuncionalidadDAO {
                 rs.getString("descripcion"),
                 rs.getString("prioridad"),
                 rs.getTimestamp("fecha_creacion").toLocalDateTime(),
-                rs.getDate("fecha_limite").toLocalDate()
+                rs.getDate("fecha_limite") != null ? rs.getDate("fecha_limite").toLocalDate() : null
         );
     }
 
