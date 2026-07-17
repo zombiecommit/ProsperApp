@@ -48,7 +48,7 @@ public class DashboardView {
 
         Button botonNuevoProyecto = new Button("+ Nuevo Proyecto");
         botonNuevoProyecto.getStyleClass().add("boton-primario");
-        botonNuevoProyecto.setOnAction(e -> mostrarDialogoNuevoProyecto());
+        botonNuevoProyecto.setOnAction(e -> mostrarDialogoProyecto(null));
 
         HBox encabezado = new HBox(20, bienvenida, botonNuevoProyecto);
         encabezado.setAlignment(Pos.CENTER_LEFT);
@@ -124,12 +124,23 @@ public class DashboardView {
         );
         fechaLimite.setStyle("-fx-font-size: 12px; -fx-text-fill: #4A4A4A;");
 
-        VBox tarjeta = new VBox(6, nombre, descripcion, estado, fechaLimite);
+        Button btnAbrir = new Button("Abrir");
+        Button btnEditar = new Button("Editar");
+        btnEditar.setOnAction(e -> mostrarDialogoProyecto(proyecto));
+        Button btnEliminar = new Button("Eliminar");
+        btnEliminar.setOnAction(e -> eliminarProyecto(proyecto));
+
+        btnAbrir.getStyleClass().add("boton-primario");
+
+        HBox botones = new HBox(10, btnAbrir, btnEditar, btnEliminar);
+        botones.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox tarjeta = new VBox(6, nombre, descripcion, estado, fechaLimite, botones);
         tarjeta.getStyleClass().add("tarjeta-formulario");
         tarjeta.setStyle(tarjeta.getStyle() + "-fx-cursor: hand;");
         tarjeta.setMaxWidth(Double.MAX_VALUE);
 
-        tarjeta.setOnMouseClicked(e -> {
+        btnAbrir.setOnAction(e -> {
             TableroView tableroView = new TableroView(stage, usuario, proyecto);
             stage.setScene(tableroView.construir());
         });
@@ -137,10 +148,10 @@ public class DashboardView {
         return tarjeta;
     }
 
-    private void mostrarDialogoNuevoProyecto() {
+    private void mostrarDialogoProyecto(Proyecto proyectoEditar) {
 
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Nuevo Proyecto");
+        dialog.setTitle(proyectoEditar == null ? "Nuevo Proyecto" : "Editar Proyecto");
 
         TextField campoNombre = new TextField();
         campoNombre.setPromptText("Nombre del proyecto");
@@ -152,6 +163,12 @@ public class DashboardView {
 
         DatePicker campoFechaLimite = new DatePicker();
         campoFechaLimite.setPromptText("Fecha límite (opcional)");
+
+        if (proyectoEditar != null) {
+            campoNombre.setText(proyectoEditar.getNombre());
+            campoDescripcion.setText(proyectoEditar.getDescripcion());
+            campoFechaLimite.setValue(proyectoEditar.getFechaLimite());
+        }
 
         Label mensajeError = new Label();
         mensajeError.getStyleClass().add("mensaje-error");
@@ -207,7 +224,10 @@ public class DashboardView {
         contenido.setPrefWidth(360);
 
         dialog.getDialogPane().setContent(contenido);
-        ButtonType botonCrear = new ButtonType("Crear", ButtonBar.ButtonData.OK_DONE);
+        ButtonType botonCrear = new ButtonType(
+                proyectoEditar == null ? "Crear" : "Guardar",
+                ButtonBar.ButtonData.OK_DONE
+        );
         dialog.getDialogPane().getButtonTypes().addAll(botonCrear, ButtonType.CANCEL);
 
         dialog.setResultConverter(botonPresionado -> {
@@ -228,37 +248,93 @@ public class DashboardView {
                 }
 
                 try {
-                    Proyecto nuevoProyecto = new Proyecto();
-                    nuevoProyecto.setIdUsuario(usuario.getIdUsuario());
-                    nuevoProyecto.setNombre(nombre);
-                    nuevoProyecto.setDescripcion(campoDescripcion.getText());
-                    nuevoProyecto.setEstado("activo");
-                    nuevoProyecto.setFechaLimite(campoFechaLimite.getValue());
 
-                    Proyecto creado = proyectoDAO.crear(nuevoProyecto);
+                    if (proyectoEditar == null) {
 
-                    int orden = 1;
-                    for (String nombreSeccion : nombresSecciones) {
-                        Seccion seccion = new Seccion();
-                        seccion.setIdProyecto(creado.getIdProyecto());
-                        seccion.setNombre(nombreSeccion);
-                        seccion.setOrden(orden);
-                        seccionDAO.crear(seccion);
-                        orden++;
+                        Proyecto nuevoProyecto = new Proyecto();
+                        nuevoProyecto.setIdUsuario(usuario.getIdUsuario());
+                        nuevoProyecto.setNombre(nombre);
+                        nuevoProyecto.setDescripcion(campoDescripcion.getText());
+                        nuevoProyecto.setEstado("activo");
+                        nuevoProyecto.setFechaLimite(campoFechaLimite.getValue());
+
+                        Proyecto creado = proyectoDAO.crear(nuevoProyecto);
+
+                        int orden = 1;
+                        for (String nombreSeccion : nombresSecciones) {
+                            Seccion seccion = new Seccion();
+                            seccion.setIdProyecto(creado.getIdProyecto());
+                            seccion.setNombre(nombreSeccion);
+                            seccion.setOrden(orden);
+                            seccionDAO.crear(seccion);
+                            orden++;
+                        }
+
+                        Toast.mostrar(raizActual, "Proyecto creado");
+
+                    } else {
+
+                        proyectoEditar.setNombre(nombre);
+                        proyectoEditar.setDescripcion(campoDescripcion.getText());
+                        proyectoEditar.setFechaLimite(campoFechaLimite.getValue());
+
+                        proyectoDAO.actualizar(proyectoEditar);
+
+                        Toast.mostrar(raizActual, "Proyecto actualizado");
                     }
 
                     cargarProyectos();
-                    Toast.mostrar(raizActual, "Proyecto creado");
 
                 } catch (SQLException ex) {
-                    mensajeError.setText("Error al crear el proyecto.");
+
+                    mensajeError.setText(
+                            proyectoEditar == null
+                                    ? "Error al crear el proyecto."
+                                    : "Error al actualizar el proyecto."
+                    );
+
                     mensajeError.setVisible(true);
                     ex.printStackTrace();
+                    }
                 }
-            }
             return null;
         });
 
         dialog.showAndWait();
+    }
+
+    private void eliminarProyecto(Proyecto proyecto) {
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Eliminar proyecto");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText(
+                "¿Deseas eliminar el proyecto \"" +
+                        proyecto.getNombre() +
+                        "\"?\n\nEsta acción eliminará también todas sus secciones, funcionalidades, notas, subtareas y demás información."
+        );
+
+        if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+            try {
+
+                proyectoDAO.eliminar(proyecto.getIdProyecto());
+
+                cargarProyectos();
+
+                Toast.mostrar(raizActual, "Proyecto eliminado correctamente");
+
+            } catch (SQLException ex) {
+
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Error");
+                error.setHeaderText(null);
+                error.setContentText("No fue posible eliminar el proyecto.");
+                error.showAndWait();
+
+                ex.printStackTrace();
+            }
+
+        }
     }
 }
