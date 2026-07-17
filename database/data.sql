@@ -20,18 +20,18 @@ VALUES
 
 INSERT INTO seccion (id_proyecto, nombre, orden)
 VALUES
-    (1, 'Backlog', 1),
-    (1, 'Doing', 2),
-    (1, 'Completed', 3),
-    (1, 'Release', 4),
+    (1, 'Pendientes', 1),
+    (1, 'En proceso', 2),
+    (1, 'Completado', 3),
+    (1, 'Lanzado', 4),
 
-    (2, 'Pendiente', 1),
-    (2, 'En desarrollo', 2),
+    (2, 'Pendientes', 1),
+    (2, 'En proceso', 2),
     (2, 'Finalizado', 3),
 
-    (3, 'Backlog', 1),
-    (3, 'Doing', 2),
-    (3, 'Completed', 3);
+    (3, 'Pendientes', 1),
+    (3, 'En proceso', 2),
+    (3, 'Completado', 3);
 
 INSERT INTO funcionalidad
     (id_seccion, titulo, descripcion, prioridad, fecha_limite)

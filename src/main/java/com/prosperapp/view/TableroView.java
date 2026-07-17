@@ -216,6 +216,18 @@ public class TableroView {
         campoPrioridad.setValue("media");
         campoPrioridad.setMaxWidth(Double.MAX_VALUE);
 
+        ComboBox<Seccion> campoSeccion = new ComboBox<>();
+        campoSeccion.setMaxWidth(Double.MAX_VALUE);
+
+        try {
+            campoSeccion.getItems().addAll(
+                    seccionDAO.listarPorProyecto(proyecto.getIdProyecto())
+            );
+            campoSeccion.setValue(seccion);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         DatePicker campoFechaLimite = new DatePicker();
         campoFechaLimite.setPromptText("Fecha límite (opcional)");
         campoFechaLimite.setPromptText("Fecha límite");
@@ -225,13 +237,22 @@ public class TableroView {
             campoDescripcion.setText(funcionalidadEditar.getDescripcion());
             campoPrioridad.setValue(funcionalidadEditar.getPrioridad());
             campoFechaLimite.setValue(funcionalidadEditar.getFechaLimite());
+            campoSeccion.setValue(seccion);
         }
 
         Label mensajeError = new Label();
         mensajeError.getStyleClass().add("mensaje-error");
         mensajeError.setVisible(false);
 
-        VBox contenido = new VBox(10, campoTitulo, campoDescripcion, campoPrioridad, campoFechaLimite, mensajeError);
+        VBox contenido = new VBox(
+                10,
+                campoTitulo,
+                campoDescripcion,
+                campoPrioridad,
+                campoSeccion,
+                campoFechaLimite,
+                mensajeError
+        );
         contenido.setPadding(new Insets(15));
         contenido.setPrefWidth(320);
 
@@ -271,6 +292,7 @@ public class TableroView {
 
                     } else {
 
+                        funcionalidadEditar.setIdSeccion(campoSeccion.getValue().getIdSeccion());
                         funcionalidadEditar.setTitulo(titulo);
                         funcionalidadEditar.setDescripcion(campoDescripcion.getText());
                         funcionalidadEditar.setPrioridad(campoPrioridad.getValue());

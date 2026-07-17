@@ -30,7 +30,7 @@ public class TestSeccionDAO {
             // Cambia este número por el id de un proyecto que exista.
             seccion.setIdProyecto(1);
 
-            seccion.setNombre("Backlog");
+            seccion.setNombre("Pendientes");
             seccion.setOrden(1);
 
             Seccion nueva = seccionDAO.crear(seccion);
@@ -46,7 +46,7 @@ public class TestSeccionDAO {
 
             System.out.println("\n=== Actualizando sección ===");
 
-            nueva.setNombre("Backlog Editado");
+            nueva.setNombre("En proceso Editado");
 
             boolean actualizado =
                     seccionDAO.actualizar(nueva);

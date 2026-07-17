@@ -51,11 +51,6 @@ public class Seccion {
 
     @Override
     public String toString() {
-        return "Seccion{" +
-                "idSeccion=" + idSeccion +
-                ", idProyecto=" + idProyecto +
-                ", nombre='" + nombre + '\'' +
-                ", orden=" + orden +
-                '}';
+        return nombre;
     }
 }
