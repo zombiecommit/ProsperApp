@@ -99,6 +99,7 @@ public class DetalleFuncionalidadView {
             List<Subtarea> subtareas = subtareaDAO.listarPorFuncionalidad(funcionalidad.getIdFuncionalidad());
 
             for (Subtarea s : subtareas) {
+
                 CheckBox check = new CheckBox(s.getDescripcion());
                 check.setSelected("completada".equalsIgnoreCase(s.getEstado()));
 
@@ -111,7 +112,68 @@ public class DetalleFuncionalidadView {
                     }
                 });
 
-                lista.getChildren().add(check);
+                Button btnEditar = new Button("Editar");
+                Button btnEliminar = new Button("Eliminar");
+
+                btnEditar.setOnAction(e -> {
+
+                    TextInputDialog dialog = new TextInputDialog(s.getDescripcion());
+                    dialog.setTitle("Editar subtarea");
+                    dialog.setHeaderText(null);
+                    dialog.setContentText("Descripción:");
+
+                    dialog.showAndWait().ifPresent(texto -> {
+
+                        if (texto.trim().isEmpty()) {
+                            return;
+                        }
+
+                        try {
+
+                            s.setDescripcion(texto.trim());
+
+                            subtareaDAO.actualizar(s);
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Subtarea actualizada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+
+                });
+
+                btnEliminar.setOnAction(e -> {
+
+                    Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmacion.setTitle("Eliminar subtarea");
+                    confirmacion.setHeaderText(null);
+                    confirmacion.setContentText("¿Eliminar esta subtarea?");
+
+                    if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                        try {
+
+                            subtareaDAO.eliminar(s.getIdSubtarea());
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Subtarea eliminada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                HBox fila = new HBox(8, check, btnEditar, btnEliminar);
+                fila.setAlignment(Pos.CENTER_LEFT);
+
+                lista.getChildren().add(fila);
             }
 
         } catch (SQLException ex) {
@@ -172,6 +234,7 @@ public class DetalleFuncionalidadView {
 
                 Button btnEditar = new Button("Editar");
                 Button btnEliminar = new Button("Eliminar");
+
 
                 btnEditar.setOnAction(e -> {
 
