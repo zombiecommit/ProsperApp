@@ -163,13 +163,70 @@ public class DetalleFuncionalidadView {
             List<Nota> notas = notaDAO.listarPorFuncionalidad(funcionalidad.getIdFuncionalidad());
 
             for (Nota n : notas) {
+
                 Label contenido = new Label(n.getContenido());
                 contenido.setWrapText(true);
 
                 Label fecha = new Label(n.getFechaCreacion().toLocalDate().toString());
                 fecha.setStyle("-fx-font-size: 10px; -fx-text-fill: #888;");
 
-                VBox item = new VBox(3, contenido, fecha);
+                Button btnEditar = new Button("Editar");
+                Button btnEliminar = new Button("Eliminar");
+
+                btnEditar.setOnAction(e -> {
+
+                    TextInputDialog dialog = new TextInputDialog(n.getContenido());
+                    dialog.setTitle("Editar nota");
+                    dialog.setHeaderText(null);
+                    dialog.setContentText("Contenido:");
+
+                    dialog.showAndWait().ifPresent(texto -> {
+
+                        if (texto.trim().isEmpty()) {
+                            return;
+                        }
+
+                        try {
+                            n.setContenido(texto.trim());
+                            notaDAO.actualizar(n);
+
+                            stage.setScene(construir());
+                            Toast.mostrar(raizActual, "Nota actualizada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+
+                });
+
+                btnEliminar.setOnAction(e -> {
+
+                    Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmacion.setTitle("Eliminar nota");
+                    confirmacion.setHeaderText(null);
+                    confirmacion.setContentText("¿Eliminar esta nota?");
+
+                    if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                        try {
+
+                            notaDAO.eliminar(n.getIdNota());
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Nota eliminada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
+                });
+
+                HBox botones = new HBox(8, btnEditar, btnEliminar);
+
+                VBox item = new VBox(3, contenido, fecha, botones);
                 item.getStyleClass().add("tarjeta-formulario");
                 item.setStyle(item.getStyle() + "-fx-padding: 10px;");
 
