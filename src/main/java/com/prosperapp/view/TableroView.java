@@ -91,7 +91,7 @@ public class TableroView {
             List<Funcionalidad> funcionalidades = funcionalidadDAO.listarPorSeccion(seccion.getIdSeccion());
 
             for (Funcionalidad f : funcionalidades) {
-                tarjetasFuncionalidad.getChildren().add(crearTarjetaFuncionalidad(f));
+                tarjetasFuncionalidad.getChildren().add(crearTarjetaFuncionalidad(f, seccion));
             }
 
         } catch (SQLException ex) {
@@ -106,7 +106,7 @@ public class TableroView {
                 "-fx-background-color: transparent; -fx-text-fill: #2E7D32; " +
                         "-fx-font-size: 12px; -fx-cursor: hand; -fx-underline: true; -fx-padding: 5 0 0 0;"
         );
-        botonAgregar.setOnAction(e -> mostrarDialogoNuevaFuncionalidad(seccion));
+        botonAgregar.setOnAction(e -> mostrarDialogoFuncionalidad(seccion, null));
 
         VBox columna = new VBox(10, nombreSeccion, tarjetasFuncionalidad, botonAgregar);
         columna.setPrefWidth(240);
@@ -115,7 +115,7 @@ public class TableroView {
         return columna;
     }
 
-    private VBox crearTarjetaFuncionalidad(Funcionalidad funcionalidad) {
+    private VBox crearTarjetaFuncionalidad(Funcionalidad funcionalidad, Seccion seccion) {
 
         Label titulo = new Label(funcionalidad.getTitulo());
         titulo.setStyle("-fx-font-weight: bold;");
@@ -131,23 +131,74 @@ public class TableroView {
         );
         fechaLimite.setStyle("-fx-font-size: 11px; -fx-text-fill: #555;");
 
-        VBox tarjeta = new VBox(4, titulo, prioridad, fechaLimite);
+        Button btnEditar = new Button("Editar");
+        Button btnEliminar = new Button("Eliminar");
+
+        btnEditar.setOnAction(e ->
+                mostrarDialogoFuncionalidad(seccion, funcionalidad)
+        );
+
+        btnEliminar.setOnAction(e -> {
+
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Eliminar funcionalidad");
+            confirmacion.setHeaderText(null);
+            confirmacion.setContentText(
+                    "¿Deseas eliminar la funcionalidad \"" +
+                            funcionalidad.getTitulo() + "\"?"
+            );
+
+            if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                try {
+
+                    funcionalidadDAO.eliminar(funcionalidad.getIdFuncionalidad());
+
+                    stage.setScene(construir());
+
+                    Toast.mostrar(raizActual, "Funcionalidad eliminada");
+
+                } catch (SQLException ex) {
+
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.setHeaderText(null);
+                    error.setContentText("No fue posible eliminar la funcionalidad.");
+                    error.showAndWait();
+
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        HBox botones = new HBox(8, btnEditar, btnEliminar);
+
+        VBox tarjeta = new VBox(4, titulo, prioridad, fechaLimite, botones);
+
         tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 10px; " +
-                "-fx-cursor: hand; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);");
 
         tarjeta.setOnMouseClicked(e -> {
-            DetalleFuncionalidadView detalleView = new DetalleFuncionalidadView(stage, usuario, proyecto, funcionalidad);
+            if (e.getTarget() instanceof Button) {
+                return;
+            }
+
+            DetalleFuncionalidadView detalleView =
+                    new DetalleFuncionalidadView(stage, usuario, proyecto, funcionalidad);
+
             stage.setScene(detalleView.construir());
         });
 
         return tarjeta;
     }
 
-    private void mostrarDialogoNuevaFuncionalidad(Seccion seccion) {
+    private void mostrarDialogoFuncionalidad(Seccion seccion, Funcionalidad funcionalidadEditar) {
 
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Nueva Funcionalidad en \"" + seccion.getNombre() + "\"");
+        dialog.setTitle(
+                funcionalidadEditar == null
+                        ? "Nueva Funcionalidad en \"" + seccion.getNombre() + "\""
+                        : "Editar Funcionalidad"
+        );
 
         TextField campoTitulo = new TextField();
         campoTitulo.setPromptText("Título");
@@ -166,6 +217,13 @@ public class TableroView {
         campoFechaLimite.setPromptText("Fecha límite (opcional)");
         campoFechaLimite.setPromptText("Fecha límite");
 
+        if (funcionalidadEditar != null) {
+            campoTitulo.setText(funcionalidadEditar.getTitulo());
+            campoDescripcion.setText(funcionalidadEditar.getDescripcion());
+            campoPrioridad.setValue(funcionalidadEditar.getPrioridad());
+            campoFechaLimite.setValue(funcionalidadEditar.getFechaLimite());
+        }
+
         Label mensajeError = new Label();
         mensajeError.getStyleClass().add("mensaje-error");
         mensajeError.setVisible(false);
@@ -175,7 +233,10 @@ public class TableroView {
         contenido.setPrefWidth(320);
 
         dialog.getDialogPane().setContent(contenido);
-        ButtonType botonCrear = new ButtonType("Crear", ButtonBar.ButtonData.OK_DONE);
+        ButtonType botonCrear = new ButtonType(
+                funcionalidadEditar == null ? "Crear" : "Guardar",
+                ButtonBar.ButtonData.OK_DONE
+        );
         dialog.getDialogPane().getButtonTypes().addAll(botonCrear, ButtonType.CANCEL);
 
         dialog.setResultConverter(botonPresionado -> {
@@ -191,25 +252,47 @@ public class TableroView {
                 }
 
                 try {
-                    Funcionalidad nueva = new Funcionalidad();
-                    nueva.setIdSeccion(seccion.getIdSeccion());
-                    nueva.setTitulo(titulo);
-                    nueva.setDescripcion(campoDescripcion.getText());
-                    nueva.setPrioridad(campoPrioridad.getValue());
-                    nueva.setFechaLimite(fecha);
 
-                    funcionalidadDAO.crear(nueva);
+                    if (funcionalidadEditar == null) {
 
-                    // Recarga todo el tablero para reflejar la nueva funcionalidad
+                        Funcionalidad nueva = new Funcionalidad();
+                        nueva.setIdSeccion(seccion.getIdSeccion());
+                        nueva.setTitulo(titulo);
+                        nueva.setDescripcion(campoDescripcion.getText());
+                        nueva.setPrioridad(campoPrioridad.getValue());
+                        nueva.setFechaLimite(fecha);
+
+                        funcionalidadDAO.crear(nueva);
+
+                        Toast.mostrar(raizActual, "Funcionalidad creada");
+
+                    } else {
+
+                        funcionalidadEditar.setTitulo(titulo);
+                        funcionalidadEditar.setDescripcion(campoDescripcion.getText());
+                        funcionalidadEditar.setPrioridad(campoPrioridad.getValue());
+                        funcionalidadEditar.setFechaLimite(fecha);
+
+                        funcionalidadDAO.actualizar(funcionalidadEditar);
+
+                        Toast.mostrar(raizActual, "Funcionalidad actualizada");
+                    }
+
                     stage.setScene(construir());
-                    Toast.mostrar(raizActual, "Funcionalidad creada");
 
                 } catch (SQLException ex) {
-                    mensajeError.setText("Error al crear la funcionalidad.");
+
+                    mensajeError.setText(
+                            funcionalidadEditar == null
+                                    ? "Error al crear la funcionalidad."
+                                    : "Error al actualizar la funcionalidad."
+                    );
+
                     mensajeError.setVisible(true);
                     ex.printStackTrace();
                 }
             }
+
             return null;
         });
 
