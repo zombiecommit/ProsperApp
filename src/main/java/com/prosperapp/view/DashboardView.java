@@ -185,7 +185,7 @@ public class DashboardView {
         labelSecciones.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 0 0;");
 
         ObservableList<String> nombresSecciones = FXCollections.observableArrayList(
-                "Backlog", "Doing", "Completed"
+                "Pendientes", "En proceso", "Completado"
         );
         ListView<String> listaSecciones = new ListView<>(nombresSecciones);
         listaSecciones.setPrefHeight(100);
