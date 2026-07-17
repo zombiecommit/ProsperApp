@@ -134,6 +134,9 @@ public class TableroView {
         Button btnEditar = new Button("Editar");
         Button btnEliminar = new Button("Eliminar");
 
+        btnEliminar.getStyleClass().add("boton-peligro");
+        btnEditar.getStyleClass().add("boton-secundario");
+
         btnEditar.setOnAction(e ->
                 mostrarDialogoFuncionalidad(seccion, funcionalidad)
         );
