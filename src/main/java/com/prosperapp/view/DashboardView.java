@@ -126,11 +126,17 @@ public class DashboardView {
 
         Button btnAbrir = new Button("Abrir");
         Button btnEditar = new Button("Editar");
+
+
+        btnEditar.getStyleClass().add("boton-secundario");
+
         btnEditar.setOnAction(e -> mostrarDialogoProyecto(proyecto));
         Button btnEliminar = new Button("Eliminar");
+
         btnEliminar.setOnAction(e -> eliminarProyecto(proyecto));
 
         btnAbrir.getStyleClass().add("boton-primario");
+        btnEliminar.getStyleClass().add("boton-peligro");
 
         HBox botones = new HBox(10, btnAbrir, btnEditar, btnEliminar);
         botones.setAlignment(Pos.CENTER_RIGHT);

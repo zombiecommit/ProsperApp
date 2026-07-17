@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class DecisionTecnicaDAO {
-    // ============================================================
+
     // Crea una nueva decisión técnica en la base de datos.
     // Retorna el objeto con su id y fecha de creación.
-    // ============================================================
+
     public DecisionTecnica crear(DecisionTecnica decision) throws SQLException {
 
         String sql = """
@@ -45,9 +45,9 @@ public class DecisionTecnicaDAO {
         return null;
     }
 
-    // ============================================================
+
     // Busca una decisión técnica por su identificador.
-    // ============================================================
+
     public Optional<DecisionTecnica> obtenerPorId(int idDecision) throws SQLException {
 
         String sql = "SELECT * FROM decision_tecnica WHERE id_decision = ?";
@@ -68,9 +68,8 @@ public class DecisionTecnicaDAO {
         return Optional.empty();
     }
 
-    // ============================================================
     // Obtiene todas las decisiones técnicas registradas.
-    // ============================================================
+
     public List<DecisionTecnica> listarTodos() throws SQLException {
 
         String sql = "SELECT * FROM decision_tecnica ORDER BY id_decision";
@@ -89,9 +88,8 @@ public class DecisionTecnicaDAO {
         return decisiones;
     }
 
-    // ============================================================
     // Obtiene todas las decisiones técnicas de una funcionalidad.
-    // ============================================================
+
     public List<DecisionTecnica> listarPorFuncionalidad(int idFuncionalidad) throws SQLException {
 
         String sql = """
@@ -119,9 +117,8 @@ public class DecisionTecnicaDAO {
         return decisiones;
     }
 
-    // ============================================================
     // Actualiza una decisión técnica existente.
-    // ============================================================
+
     public boolean actualizar(DecisionTecnica decision) throws SQLException {
 
         String sql = """
@@ -144,9 +141,8 @@ public class DecisionTecnicaDAO {
         }
     }
 
-    // ============================================================
     // Elimina una decisión técnica por su identificador.
-    // ============================================================
+
     public boolean eliminar(int idDecision) throws SQLException {
 
         String sql = "DELETE FROM decision_tecnica WHERE id_decision = ?";
@@ -160,10 +156,9 @@ public class DecisionTecnicaDAO {
         }
     }
 
-    // ============================================================
     // Convierte un registro de la base de datos en un objeto
     // DecisionTecnica.
-    // ============================================================
+
     private DecisionTecnica mapearDecisionTecnica(ResultSet rs) throws SQLException {
 
         return new DecisionTecnica(

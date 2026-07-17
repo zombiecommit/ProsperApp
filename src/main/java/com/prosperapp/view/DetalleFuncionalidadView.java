@@ -115,6 +115,9 @@ public class DetalleFuncionalidadView {
                 Button btnEditar = new Button("Editar");
                 Button btnEliminar = new Button("Eliminar");
 
+                btnEliminar.getStyleClass().add("boton-peligro");
+                btnEditar.getStyleClass().add("boton-secundario");
+
                 btnEditar.setOnAction(e -> {
 
                     TextInputDialog dialog = new TextInputDialog(s.getDescripcion());
@@ -235,6 +238,8 @@ public class DetalleFuncionalidadView {
                 Button btnEditar = new Button("Editar");
                 Button btnEliminar = new Button("Eliminar");
 
+                btnEditar.getStyleClass().add("boton-secundario");
+                btnEliminar.getStyleClass().add("boton-peligro");
 
                 btnEditar.setOnAction(e -> {
 
@@ -348,7 +353,86 @@ public class DetalleFuncionalidadView {
                 Label descripcion = new Label(d.getDescripcion());
                 descripcion.setWrapText(true);
 
-                VBox item = new VBox(3, titulo, descripcion);
+                Button btnEditar = new Button("Editar");
+                Button btnEliminar = new Button("Eliminar");
+
+                btnEliminar.getStyleClass().add("boton-peligro");
+                btnEditar.getStyleClass().add("boton-secundario");
+
+                btnEditar.setOnAction(e -> {
+
+                    TextInputDialog dialogTitulo = new TextInputDialog(d.getTitulo());
+                    dialogTitulo.setTitle("Editar decisión técnica");
+                    dialogTitulo.setHeaderText(null);
+                    dialogTitulo.setContentText("Título:");
+
+                    dialogTitulo.showAndWait().ifPresent(tituloNuevo -> {
+
+                        if (tituloNuevo.trim().isEmpty()) {
+                            return;
+                        }
+
+
+                        TextInputDialog dialogDescripcion = new TextInputDialog(d.getDescripcion());
+                        dialogDescripcion.setTitle("Editar decisión técnica");
+                        dialogDescripcion.setHeaderText(null);
+                        dialogDescripcion.setContentText("Descripción:");
+
+                        dialogDescripcion.showAndWait().ifPresent(descripcionNueva -> {
+
+                            if (descripcionNueva.trim().isEmpty()) {
+                                return;
+                            }
+
+                            try {
+
+                                d.setTitulo(tituloNuevo.trim());
+                                d.setDescripcion(descripcionNueva.trim());
+
+                                decisionDAO.actualizar(d);
+
+                                stage.setScene(construir());
+
+                                Toast.mostrar(raizActual, "Decisión técnica actualizada");
+
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        });
+
+                    });
+
+                });
+
+                btnEliminar.setOnAction(e -> {
+
+                    Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmacion.setTitle("Eliminar decisión técnica");
+                    confirmacion.setHeaderText(null);
+                    confirmacion.setContentText("¿Eliminar esta decisión técnica?");
+
+                    if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                        try {
+
+                            decisionDAO.eliminar(d.getIdDecision());
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Decisión técnica eliminada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                HBox botones = new HBox(8, btnEditar, btnEliminar);
+
+                VBox item = new VBox(3, titulo, descripcion, botones);
                 item.getStyleClass().add("tarjeta-formulario");
                 item.setStyle(item.getStyle() + "-fx-padding: 10px;");
 
@@ -414,7 +498,81 @@ public class DetalleFuncionalidadView {
                 codigo.setStyle("-fx-font-family: 'Consolas', monospace; -fx-background-color: #F1F8F4; -fx-padding: 8px;");
                 codigo.setWrapText(true);
 
-                VBox item = new VBox(3, lenguaje, codigo);
+                Button btnEditar = new Button("Editar");
+                Button btnEliminar = new Button("Eliminar");
+
+                btnEliminar.getStyleClass().add("boton-peligro");
+                btnEditar.getStyleClass().add("boton-secundario");
+
+                btnEditar.setOnAction(e -> {
+
+                    TextInputDialog dialogLenguaje = new TextInputDialog(f.getLenguaje());
+                    dialogLenguaje.setTitle("Editar fragmento");
+                    dialogLenguaje.setHeaderText(null);
+                    dialogLenguaje.setContentText("Lenguaje:");
+
+                    dialogLenguaje.showAndWait().ifPresent(lenguajeNuevo -> {
+
+                        TextInputDialog dialogCodigo = new TextInputDialog(f.getCodigo());
+                        dialogCodigo.setTitle("Editar fragmento");
+                        dialogCodigo.setHeaderText(null);
+                        dialogCodigo.setContentText("Código:");
+
+                        dialogCodigo.showAndWait().ifPresent(codigoNuevo -> {
+
+                            if (codigoNuevo.trim().isEmpty()) {
+                                return;
+                            }
+
+                            try {
+
+                                f.setLenguaje(lenguajeNuevo.trim());
+                                f.setCodigo(codigoNuevo.trim());
+
+                                fragmentoDAO.actualizar(f);
+
+                                stage.setScene(construir());
+
+                                Toast.mostrar(raizActual, "Fragmento actualizado");
+
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        });
+
+                    });
+
+                });
+
+                btnEliminar.setOnAction(e -> {
+
+                    Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmacion.setTitle("Eliminar fragmento");
+                    confirmacion.setHeaderText(null);
+                    confirmacion.setContentText("¿Eliminar este fragmento de código?");
+
+                    if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                        try {
+
+                            fragmentoDAO.eliminar(f.getIdFragmento());
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Fragmento eliminado");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                HBox botones = new HBox(8, btnEditar, btnEliminar);
+
+                VBox item = new VBox(3, lenguaje, codigo, botones);
                 item.getStyleClass().add("tarjeta-formulario");
                 item.setStyle(item.getStyle() + "-fx-padding: 10px;");
 
