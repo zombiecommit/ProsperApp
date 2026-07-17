@@ -115,6 +115,8 @@ public class DetalleFuncionalidadView {
                 Button btnEditar = new Button("Editar");
                 Button btnEliminar = new Button("Eliminar");
 
+
+
                 btnEditar.setOnAction(e -> {
 
                     TextInputDialog dialog = new TextInputDialog(s.getDescripcion());
@@ -348,7 +350,83 @@ public class DetalleFuncionalidadView {
                 Label descripcion = new Label(d.getDescripcion());
                 descripcion.setWrapText(true);
 
-                VBox item = new VBox(3, titulo, descripcion);
+                Button btnEditar = new Button("Editar");
+                Button btnEliminar = new Button("Eliminar");
+
+                btnEditar.setOnAction(e -> {
+
+                    TextInputDialog dialogTitulo = new TextInputDialog(d.getTitulo());
+                    dialogTitulo.setTitle("Editar decisión técnica");
+                    dialogTitulo.setHeaderText(null);
+                    dialogTitulo.setContentText("Título:");
+
+                    dialogTitulo.showAndWait().ifPresent(tituloNuevo -> {
+
+                        if (tituloNuevo.trim().isEmpty()) {
+                            return;
+                        }
+
+
+                        TextInputDialog dialogDescripcion = new TextInputDialog(d.getDescripcion());
+                        dialogDescripcion.setTitle("Editar decisión técnica");
+                        dialogDescripcion.setHeaderText(null);
+                        dialogDescripcion.setContentText("Descripción:");
+
+                        dialogDescripcion.showAndWait().ifPresent(descripcionNueva -> {
+
+                            if (descripcionNueva.trim().isEmpty()) {
+                                return;
+                            }
+
+                            try {
+
+                                d.setTitulo(tituloNuevo.trim());
+                                d.setDescripcion(descripcionNueva.trim());
+
+                                decisionDAO.actualizar(d);
+
+                                stage.setScene(construir());
+
+                                Toast.mostrar(raizActual, "Decisión técnica actualizada");
+
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        });
+
+                    });
+
+                });
+
+                btnEliminar.setOnAction(e -> {
+
+                    Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmacion.setTitle("Eliminar decisión técnica");
+                    confirmacion.setHeaderText(null);
+                    confirmacion.setContentText("¿Eliminar esta decisión técnica?");
+
+                    if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+
+                        try {
+
+                            decisionDAO.eliminar(d.getIdDecision());
+
+                            stage.setScene(construir());
+
+                            Toast.mostrar(raizActual, "Decisión técnica eliminada");
+
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+                HBox botones = new HBox(8, btnEditar, btnEliminar);
+
+                VBox item = new VBox(3, titulo, descripcion, botones);
                 item.getStyleClass().add("tarjeta-formulario");
                 item.setStyle(item.getStyle() + "-fx-padding: 10px;");
 
