@@ -121,9 +121,8 @@ public class SeccionDAO {
         );
     }
 
-    // ============================================================
 // Obtiene todas las secciones pertenecientes a un proyecto.
-// ============================================================
+
     public List<Seccion> listarPorProyecto(int idProyecto) throws SQLException {
 
         String sql = """

@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class FragmentoCodigoDAO {
-    // ============================================================
+
     // Crea un nuevo fragmento de código en la base de datos.
     // Retorna el objeto con su id y fecha de creación.
-    // ============================================================
+
     public FragmentoCodigo crear(FragmentoCodigo fragmento) throws SQLException {
 
         String sql = """
@@ -45,9 +45,8 @@ public class FragmentoCodigoDAO {
         return null;
     }
 
-    // ============================================================
     // Busca un fragmento de código por su identificador.
-    // ============================================================
+
     public Optional<FragmentoCodigo> obtenerPorId(int idFragmento) throws SQLException {
 
         String sql = "SELECT * FROM fragmento_codigo WHERE id_fragmento = ?";
@@ -68,9 +67,7 @@ public class FragmentoCodigoDAO {
         return Optional.empty();
     }
 
-    // ============================================================
     // Obtiene todos los fragmentos de código registrados.
-    // ============================================================
     public List<FragmentoCodigo> listarTodos() throws SQLException {
 
         String sql = "SELECT * FROM fragmento_codigo ORDER BY id_fragmento";
@@ -89,12 +86,9 @@ public class FragmentoCodigoDAO {
         return fragmentos;
     }
 
-    // ============================================================
-    // Obtiene todos los fragmentos de código registrados.
-    // ============================================================
-    // ============================================================
+
 // Obtiene todos los fragmentos de código de una funcionalidad.
-// ============================================================
+
     public List<FragmentoCodigo> listarPorFuncionalidad(int idFuncionalidad) throws SQLException {
 
         String sql = """
@@ -122,9 +116,8 @@ public class FragmentoCodigoDAO {
         return fragmentos;
     }
 
-    // ============================================================
     // Actualiza un fragmento de código existente.
-    // ============================================================
+
     public boolean actualizar(FragmentoCodigo fragmento) throws SQLException {
 
         String sql = """
@@ -147,9 +140,9 @@ public class FragmentoCodigoDAO {
         }
     }
 
-    // ============================================================
+
     // Elimina un fragmento de código por su identificador.
-    // ============================================================
+
     public boolean eliminar(int idFragmento) throws SQLException {
 
         String sql = "DELETE FROM fragmento_codigo WHERE id_fragmento = ?";
@@ -163,10 +156,9 @@ public class FragmentoCodigoDAO {
         }
     }
 
-    // ============================================================
     // Convierte un registro de la base de datos en un objeto
     // FragmentoCodigo.
-    // ============================================================
+
     private FragmentoCodigo mapearFragmentoCodigo(ResultSet rs) throws SQLException {
 
         return new FragmentoCodigo(

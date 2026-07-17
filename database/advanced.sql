@@ -1,7 +1,5 @@
--- ============================================================
 -- FUNCIÓN: Contar la cantidad de funcionalidades de un proyecto
 -- Recibe el id de un proyecto y devuelve el número total de funcionalidades asociadas a todas sus secciones.
--- ============================================================
 
 CREATE OR REPLACE FUNCTION contar_funcionalidades(id_proyecto_param INTEGER)
 RETURNS INTEGER
@@ -27,11 +25,8 @@ BEGIN
 END;
 $$;
 
-
--- ============================================================
 -- PROCEDIMIENTO: Crear un nuevo proyecto
 -- Inserta un proyecto en la base de datos utilizando los datos recibidos como parámetros.
--- ============================================================
 
 CREATE OR REPLACE PROCEDURE crear_proyecto(
     p_id_usuario INTEGER,

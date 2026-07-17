@@ -88,7 +88,7 @@ public class DetalleFuncionalidadView {
         return scene;
     }
 
-    // ================= SUBTAREAS (checklist) =================
+    //SUBTAREAS (checklist)
 
     private VBox construirTabSubtareas() {
 
@@ -217,7 +217,7 @@ public class DetalleFuncionalidadView {
         return contenedorTab;
     }
 
-    // ================= NOTAS =================
+    //  NOTAS
 
     private VBox construirTabNotas() {
 
@@ -336,7 +336,7 @@ public class DetalleFuncionalidadView {
         return new VBox(lista, filaAgregar);
     }
 
-    // ================= DECISIONES TÉCNICAS =================
+    //DECISIONES TÉCNICAS
 
     private VBox construirTabDecisiones() {
 
@@ -480,7 +480,7 @@ public class DetalleFuncionalidadView {
         return new VBox(lista, filaAgregar);
     }
 
-    // ================= FRAGMENTOS DE CÓDIGO =================
+    // FRAGMENTOS DE CÓDIGO
 
     private VBox construirTabFragmentos() {
 

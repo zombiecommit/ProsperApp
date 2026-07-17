@@ -10,9 +10,7 @@ import java.util.Optional;
 
 public class SubtareaDAO {
 
-    // ============================================================
     // Crea una nueva subtarea en la base de datos.
-    // ============================================================
 
     public Subtarea crear(Subtarea subtarea) throws SQLException {
 
@@ -45,9 +43,7 @@ public class SubtareaDAO {
         return null;
     }
 
-    // ============================================================
     // Busca una subtarea por su identificador.
-    // ============================================================
     public Optional<Subtarea> obtenerPorId(int idSubtarea) throws SQLException {
 
         String sql = "SELECT * FROM subtarea WHERE id_subtarea = ?";
@@ -68,9 +64,9 @@ public class SubtareaDAO {
         return Optional.empty();
     }
 
-    // ============================================================
+
     // Obtiene todas las subtareas registradas.
-    // ============================================================
+
     public List<Subtarea> listarTodos() throws SQLException {
 
         String sql = "SELECT * FROM subtarea ORDER BY id_subtarea";
@@ -89,9 +85,8 @@ public class SubtareaDAO {
         return subtareas;
     }
 
-    // ============================================================
     // Obtiene todas las subtareas pertenecientes a una funcionalidad.
-    // ============================================================
+
     public List<Subtarea> listarPorFuncionalidad(int idFuncionalidad) throws SQLException {
 
         String sql = """
@@ -119,9 +114,9 @@ public class SubtareaDAO {
         return subtareas;
     }
 
-    // ============================================================
+
     // Actualiza la información de una subtarea existente.
-    // ============================================================
+
     public boolean actualizar(Subtarea subtarea) throws SQLException {
 
         String sql = """
@@ -144,9 +139,8 @@ public class SubtareaDAO {
         }
     }
 
-    // ============================================================
     // Elimina una subtarea por su identificador.
-    // ============================================================
+
     public boolean eliminar(int idSubtarea) throws SQLException {
 
         String sql = "DELETE FROM subtarea WHERE id_subtarea = ?";
@@ -160,10 +154,10 @@ public class SubtareaDAO {
         }
     }
 
-    // ============================================================
+
     // Convierte un registro de la base de datos en un objeto
     // Subtarea.
-    // ============================================================
+
     private Subtarea mapearSubtarea(ResultSet rs) throws SQLException {
 
         return new Subtarea(

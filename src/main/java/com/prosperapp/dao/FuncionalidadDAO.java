@@ -10,10 +10,9 @@ import java.util.Optional;
 
 public class FuncionalidadDAO {
 
-    // ============================================================
     // Crea una nueva funcionalidad en la base de datos.
     // Retorna el objeto con su id y fecha de creación asignados.
-    // ============================================================
+
     public Funcionalidad crear(Funcionalidad funcionalidad) throws SQLException {
 
         String sql = """
@@ -54,10 +53,10 @@ public class FuncionalidadDAO {
         return null;
     }
 
-    // ============================================================
+
     // Busca una funcionalidad por su identificador.
     // Retorna un Optional para indicar si fue encontrada o no.
-    // ============================================================
+
     public Optional<Funcionalidad> obtenerPorId(int idFuncionalidad) throws SQLException {
 
         String sql = "SELECT * FROM funcionalidad WHERE id_funcionalidad = ?";
@@ -78,9 +77,8 @@ public class FuncionalidadDAO {
         return Optional.empty();
     }
 
-    // ============================================================
     // Obtiene todas las funcionalidades registradas.
-    // ============================================================
+
     public List<Funcionalidad> listarTodos() throws SQLException {
 
         String sql = "SELECT * FROM funcionalidad ORDER BY id_funcionalidad";
@@ -99,10 +97,9 @@ public class FuncionalidadDAO {
         return funcionalidades;
     }
 
-    // ============================================================
     // Obtiene todas las funcionalidades pertenecientes
     // a una sección específica.
-    // ============================================================
+
     public List<Funcionalidad> listarPorSeccion(int idSeccion) throws SQLException {
 
         String sql = """
@@ -130,9 +127,9 @@ public class FuncionalidadDAO {
         return funcionalidades;
     }
 
-    // ============================================================
+
     // Actualiza la información de una funcionalidad existente.
-    // ============================================================
+
     public boolean actualizar(Funcionalidad funcionalidad) throws SQLException {
 
         String sql = """
@@ -163,9 +160,8 @@ public class FuncionalidadDAO {
         }
     }
 
-    // ============================================================
     // Elimina una funcionalidad a partir de su identificador.
-    // ============================================================
+
     public boolean eliminar(int idFuncionalidad) throws SQLException {
 
         String sql = "DELETE FROM funcionalidad WHERE id_funcionalidad = ?";
@@ -179,10 +175,9 @@ public class FuncionalidadDAO {
         }
     }
 
-    // ============================================================
     // Convierte un registro de la base de datos en un objeto
     // Funcionalidad.
-    // ============================================================
+
     private Funcionalidad mapearFuncionalidad(ResultSet rs) throws SQLException {
 
         return new Funcionalidad(
